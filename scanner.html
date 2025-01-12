@@ -4,44 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner Médical</title>
-    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        video, canvas {
+            width: 100%;
+            max-width: 600px;
+            margin: 10px 0;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Scanner Médical</h1>
-    </header>
-    <main>
-        <p>Appuyez sur le bouton ci-dessous pour activer la caméra et commencer le scan.</p>
-        <video id="video" autoplay style="width: 100%; max-width: 600px; border: 1px solid #ccc;"></video>
-        <button id="captureButton" style="margin-top: 10px;">Activer la Caméra</button>
-        <canvas id="canvas" style="display: none;"></canvas>
-        <p id="result" style="margin-top: 20px; font-size: 1.2em;"></p>
-    </main>
+    <h1>Scanner Médical</h1>
+    <p>Appuyez sur le bouton ci-dessous pour activer la caméra et commencer le scan.</p>
+    <video id="video" autoplay></video>
+    <br>
+    <button id="startButton">Activer la Caméra</button>
+    <button id="captureButton" style="display:none;">Prendre une Photo</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <p id="result"></p>
 
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
+        const startButton = document.getElementById('startButton');
         const captureButton = document.getElementById('captureButton');
         const result = document.getElementById('result');
 
         // Fonction pour activer la caméra
-        captureButton.addEventListener('click', async () => {
+        startButton.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 video.srcObject = stream;
+                startButton.style.display = 'none';
+                captureButton.style.display = 'inline';
             } catch (err) {
                 result.textContent = "Erreur : Impossible d'accéder à la caméra.";
+                result.style.color = 'red';
             }
         });
 
-        // Capture une image (optionnel)
-        video.addEventListener('click', () => {
+        // Fonction pour capturer une photo
+        captureButton.addEventListener('click', () => {
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = canvas.toDataURL('image/png');
-            result.textContent = "Image capturée (simulation de diagnostic)";
+            // Simuler une analyse de l'image
+            result.textContent = "Analyse en cours...";
+            setTimeout(() => {
+                result.textContent = "Votre état de santé est excellent !";
+            }, 2000); // Délai simulé pour l'analyse
         });
     </script>
 </body>
